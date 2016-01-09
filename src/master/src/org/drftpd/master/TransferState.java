@@ -325,7 +325,7 @@ public class TransferState {
 					Boolean.parseBoolean(GlobalContext.getConfig().getMainProperties()
 							.getProperty("delete.upload.on.abort", "false"))) {
 				try {
-					_transferFile.deleteUnchecked();
+					_transferFile.deleteUnchecked(true);
 				} catch (FileNotFoundException e) {
 					// This is fine as we wanted to delete it anyway
 				}

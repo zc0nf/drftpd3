@@ -207,7 +207,7 @@ public class ZipscriptCommands extends CommandInterface {
 							status = "ZEROBYTE";
 							if (deleteZeroByte) {
 								try {
-									file.deleteUnchecked();
+									file.deleteUnchecked(true);
 									status += " - deleted";
 								} catch (FileNotFoundException e4) {
 									// File already gone, all is good
@@ -228,7 +228,7 @@ public class ZipscriptCommands extends CommandInterface {
 							try {
 								/* TODO if the user is rescanning and cannot delete the file
 								 * what's the real point of rescanning? correct me if i'm wrong (fr0w) */
-								file.deleteUnchecked();
+								file.deleteUnchecked(true);
 							} catch (FileNotFoundException e4) {
 								// File already gone, all is good
 							}

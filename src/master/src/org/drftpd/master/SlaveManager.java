@@ -508,14 +508,26 @@ public class SlaveManager implements Runnable, TimeEventInterface {
 	 * 
 	 * @param directory
 	 */
-	public void deleteOnAllSlaves(DirectoryHandle directory) {
+
+    public void deleteOnAllSlaves(DirectoryHandle directory) {
+        senddeleteOnAllSlaves(directory, false);
+    }
+
+    public void deleteOnAllSlaves(DirectoryHandle directory, boolean force) {
+        senddeleteOnAllSlaves(directory, force);
+    }
+
+	private void senddeleteOnAllSlaves(DirectoryHandle directory, boolean force) {
 		HashMap<RemoteSlave, String> slaveMap = new HashMap<RemoteSlave, String>();
 		Collection<RemoteSlave> slaves = new ArrayList<RemoteSlave>(_rslaves.values());
 		for (RemoteSlave rslave : slaves) {
 			String index;
 			try {
-				AbstractBasicIssuer basicIssuer = (AbstractBasicIssuer) getIssuerForClass(AbstractBasicIssuer.class); 
-				index = basicIssuer.issueDeleteToSlave(rslave, directory.getPath());
+				AbstractBasicIssuer basicIssuer = (AbstractBasicIssuer) getIssuerForClass(AbstractBasicIssuer.class);
+                if (force)
+                    index = basicIssuer.issueForceDeleteToSlave(rslave, directory.getPath());
+                else
+                    index = basicIssuer.issueDeleteToSlave(rslave, directory.getPath());
 				slaveMap.put(rslave, index);
 			} catch (SlaveUnavailableException e) {
 				rslave.addQueueDelete(directory.getPath());
@@ -532,13 +544,9 @@ public class SlaveManager implements Runnable, TimeEventInterface {
 				if (e.getCause() instanceof FileNotFoundException) {
 					continue;
 				}
-				rslave
-						.setOffline("IOException deleting file, check logs for specific error");
+				rslave.setOffline("IOException deleting file, check logs for specific error");
 				rslave.addQueueDelete(directory.getPath());
-				logger
-						.error(
-								"IOException deleting file, file will be deleted when slave comes online",
-								e);
+				logger.error("IOException deleting file, file will be deleted when slave comes online", e);
 				rslave.addQueueDelete(directory.getPath());
 			}
 		}

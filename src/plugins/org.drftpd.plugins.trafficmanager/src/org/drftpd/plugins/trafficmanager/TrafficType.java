@@ -145,7 +145,7 @@ public abstract class TrafficType {
 	protected boolean doDelete(FileHandle file) {
 		if (!Boolean.parseBoolean(GlobalContext.getConfig().getMainProperties().getProperty("delete.upload.on.abort", "false"))) {
 			try {
-				file.deleteUnchecked();
+				file.deleteUnchecked(true);
 			} catch (FileNotFoundException e) {
 				// FileDeleted - Ignore
 			}

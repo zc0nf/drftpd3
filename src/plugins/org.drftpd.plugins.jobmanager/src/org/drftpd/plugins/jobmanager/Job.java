@@ -147,7 +147,7 @@ public class Job {
                         return;
                     }
                     if (!rslave.isAvailable()) {
-                        rslave.simpleDelete(getFile().getPath());
+                        rslave.simpleDelete(getFile().getPath(), true);
                         getFile().removeSlave(rslave);
                     }
                 }
@@ -404,7 +404,7 @@ public class Job {
 					logSuccess();
 				} else {
 					logger.debug("Checksum did not match, removing offending file");
-					destSlave.simpleDelete(getFile().getPath());
+					destSlave.simpleDelete(getFile().getPath(), true);
 				}
 				return;
 			}
@@ -412,7 +412,7 @@ public class Job {
                     + sourceSlave.getName()
                     + " to " + destSlave.getName(),
                     e);
-			destSlave.simpleDelete(getFile().getPath());
+			destSlave.simpleDelete(getFile().getPath(), true);
 		} catch (SourceSlaveException e) {
 			if (e.getCause() instanceof FileNotFoundException) {
 				logger.warn("Caught FileNotFoundException in sending " + getFile().getName()

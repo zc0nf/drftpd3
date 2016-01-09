@@ -301,7 +301,7 @@ public abstract class LinkType {
 			try {
 				LinkHandle link = linkDir.getLinkUnchecked(linkNameFinal);
 				try {
-					link.deleteUnchecked();
+					link.deleteUnchecked(false);
 				} catch (FileNotFoundException e) {
 					// Link no longer exists....ignore
 				}
@@ -322,7 +322,7 @@ public abstract class LinkType {
 					} catch (FileNotFoundException e1) {
 						try {
 							if (link.getTargetStringWithSlash().startsWith(targetDir.getPath() + "/")) {
-								link.deleteUnchecked();
+								link.deleteUnchecked(false);
 							}
 						} catch (FileNotFoundException e) {
 							// Link no longer exists - Ignore
@@ -330,7 +330,7 @@ public abstract class LinkType {
 					} catch (ObjectNotValidException e1) {
 						// Link target isn't a directory, delete the link as it is bad
 						try {
-							link.deleteUnchecked();
+							link.deleteUnchecked(false);
 						} catch (FileNotFoundException e) {
 							// Link no longer exists - Ignore
 						}	
@@ -366,12 +366,12 @@ public abstract class LinkType {
 									link.renameToUnchecked(newlink);
 									newlink.setTarget(oldtarget.replace(oldDir.getPath(),targetDir.getPath()));
 								} catch (FileNotFoundException e) {
-									link.deleteUnchecked();
+									link.deleteUnchecked(false);
 								} catch (FileExistsException e) {
-									link.deleteUnchecked();
+									link.deleteUnchecked(false);
 								}
 							} else {
-								link.deleteUnchecked();	
+								link.deleteUnchecked(false);	
 							}
 						} catch (FileNotFoundException e) {
 							// Link no longer exists - Ignore
@@ -379,7 +379,7 @@ public abstract class LinkType {
 					} catch (ObjectNotValidException e1) {
 						// Link target isn't a directory, delete the link as it is bad
 						try {
-							link.deleteUnchecked();
+							link.deleteUnchecked(false);
 						} catch (FileNotFoundException e) {
 							// Link no longer exists - Ignore
 						}	
@@ -411,12 +411,12 @@ public abstract class LinkType {
 											link.renameToUnchecked(newlink);
 											newlink.setTarget(oldtarget.replace(oldDir.getPath(),targetDir.getPath()));
 										} catch (FileNotFoundException e) {
-											link.deleteUnchecked();
+											link.deleteUnchecked(false);
 										} catch (FileExistsException e) {
-											link.deleteUnchecked();
+											link.deleteUnchecked(false);
 										}
 									} else {
-										link.deleteUnchecked();	
+										link.deleteUnchecked(false);	
 									}
 								} catch (FileNotFoundException e) {
 									// Link no longer exists - Ignore
@@ -424,7 +424,7 @@ public abstract class LinkType {
 							} catch (ObjectNotValidException e1) {
 								// Link target isn't a directory, delete the link as it is bad
 								try {
-									link.deleteUnchecked();
+									link.deleteUnchecked(false);
 								} catch (FileNotFoundException e) {
 									// Link no longer exists - Ignore
 								}	

@@ -573,9 +573,16 @@ public class RemoteSlave extends ExtendedTimedStats implements Runnable, Compara
 	 * Deletes files/directories and waits for the response Meant to be used if
 	 * you don't want to utilize asynchronization
 	 */
-	public void simpleDelete(String path) {
+    public void simpleDelete(String path) {
+        simpleDelete(path, false);
+    }
+
+	public void simpleDelete(String path, boolean force) {
 		try {
-			fetchResponse(SlaveManager.getBasicIssuer().issueDeleteToSlave(this, path), 300000);
+            if (force)
+                fetchResponse(SlaveManager.getBasicIssuer().issueForceDeleteToSlave(this, path), 300000);
+            else
+                fetchResponse(SlaveManager.getBasicIssuer().issueDeleteToSlave(this, path), 300000);
 		} catch (RemoteIOException e) {
 			if (e.getCause() instanceof FileNotFoundException) {
 				return;

@@ -85,10 +85,16 @@ public abstract class InodeHandle implements InodeHandleInterface, Comparable<In
 			throw new PermissionDeniedException("You are not allowed to delete "+getPath());
 		}
 		
-		deleteUnchecked();
+		deleteUnchecked(false);
 	}
-	
-	public void deleteUnchecked() throws FileNotFoundException {	
+
+    /**
+     * Force function is to force delete action on NoDeleteSlaves
+     * NoDeleteSlaves is most commonly used on slaves with archive, where you want to upload data but not delete it unless its a bad file.
+     * @param force
+     * @throws FileNotFoundException
+     */
+	public void deleteUnchecked(boolean force) throws FileNotFoundException {
 		getInode().delete();
 	}
 
@@ -463,7 +469,7 @@ public abstract class InodeHandle implements InodeHandleInterface, Comparable<In
 	 *          If the inode for this handle does not exist
 	 */
 	public <T> T removeUntypedPluginMetaData(String key, Class<T> clazz) throws FileNotFoundException {
-		return getInode().<T>removeUntypedPluginMetaData(key);
+		return getInode().removeUntypedPluginMetaData(key);
 	}
 
 	/**
@@ -482,7 +488,7 @@ public abstract class InodeHandle implements InodeHandleInterface, Comparable<In
 	 *          If the inode for this handle does not exist
 	 */
 	public <T> T getUntypedPluginMetaData(String key, Class<T> clazz) throws FileNotFoundException {
-		return getInode().<T>getUntypedPluginMetaData(key);
+		return getInode().getUntypedPluginMetaData(key);
 	}
 
 	public Map<String,AtomicInteger> getSlaveRefCounts() throws FileNotFoundException {

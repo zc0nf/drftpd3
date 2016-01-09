@@ -98,7 +98,7 @@ public class SpeedTest implements PostHookInterface {
 
 					// Just delete file, credits have not been changed yet
 					try {
-						file.deleteUnchecked();
+						file.deleteUnchecked(true);
 					} catch (FileNotFoundException e) {
 						// Deleted already?
 					}

@@ -477,7 +477,7 @@ public class DirectoryHandle extends InodeHandle implements
 	}
 
     public void collisionHandler(LightRemoteInode lrf, RemoteSlave rslave) {
-        rslave.simpleDelete(getPath() + lrf.getPath());
+        rslave.simpleDelete(getPath() + lrf.getPath(), true);
     }
 
 	public void remerge(List<LightRemoteInode> files, RemoteSlave rslave, long lastModified)
@@ -1011,7 +1011,7 @@ public class DirectoryHandle extends InodeHandle implements
 			inode.removeSlave(rslave);
 		}
 		if (!empty && isEmptyUnchecked()) { // if it wasn't empty before, but is now, delete it
-			deleteUnchecked();
+			deleteUnchecked(false);
 		}
 	}
 
@@ -1050,12 +1050,18 @@ public class DirectoryHandle extends InodeHandle implements
 	public boolean isLink() {
 		return false;
 	}
-	
-	@Override
-	public void deleteUnchecked() throws FileNotFoundException {
+
+    /**
+     * Force function is to force delete action on NoDeleteSlaves
+     * NoDeleteSlaves is most commonly used on slaves with archive, where you want to upload data but not delete it unless its a bad file.
+     * @param force
+     * @throws FileNotFoundException
+     */
+    @Override
+    public void deleteUnchecked(boolean force) throws FileNotFoundException {
 		abortAllTransfers("Directory " + getPath() + " is being deleted");
-		GlobalContext.getGlobalContext().getSlaveManager().deleteOnAllSlaves(this);
-		super.deleteUnchecked();
+		GlobalContext.getGlobalContext().getSlaveManager().deleteOnAllSlaves(this, force);
+		super.deleteUnchecked(false);
 	}
 
 	public long validateSizeRecursive() throws FileNotFoundException {

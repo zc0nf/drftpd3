@@ -277,7 +277,7 @@ public class Request extends CommandInterface {
 					if (parser.getUser().equals(user.getName()) ||
 							new Permission(deleteOthers).check(user)) {
 						
-						dir.deleteUnchecked();
+						dir.deleteUnchecked(false);
 
 						if (session instanceof BaseFtpConnection) {
 							response.addComment(session.jprintf(_bundle, _keyPrefix+"reqdel.success", env, request.getUser()));

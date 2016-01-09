@@ -129,7 +129,7 @@ public class ZipscriptZipPostHook extends ZipTools implements PostHookInterface 
 						} else {
 							response.addComment("Zip integrity check failed, deleting file");
 							try {
-								transferFile.deleteUnchecked();
+								transferFile.deleteUnchecked(true);
 							} catch (FileNotFoundException e) {
 								// file disappeared, not a problem as we wanted it gone anyway
 							}

@@ -559,7 +559,7 @@ public class SlaveManagement extends CommandInterface {
 			}
 
 			int size = rslave.doRemergequeue();
-			if (!rslave.isOnline())
+			if (!rslave.isAvailable() || !rslave.isOnline())
 			{
 				arr.add(rslave.getName() +" is offline");
 			}

@@ -248,7 +248,7 @@ public class AutoFreeSpace implements PluginInterface {
 									checkedReleases.add(oldestRelease.getName());
 									continue;
 								}
-								oldestRelease.deleteUnchecked();
+								oldestRelease.deleteUnchecked(false);
 								logger.info("AUTODELETE: Removing " + oldestRelease.getName());
 							}
 						} catch (FileNotFoundException e) {
@@ -283,7 +283,7 @@ public class AutoFreeSpace implements PluginInterface {
 									GlobalContext.getEventService().publishAsync(new AFSEvent(oldestRelease, remoteSlave));
 
 									//issue somewhere around here, we find the release but it never gets deleted..
-									oldestRelease.deleteUnchecked();
+									oldestRelease.deleteUnchecked(false);
 	
 									freespace = remoteSlave.getSlaveStatus().getDiskSpaceAvailable();
 	

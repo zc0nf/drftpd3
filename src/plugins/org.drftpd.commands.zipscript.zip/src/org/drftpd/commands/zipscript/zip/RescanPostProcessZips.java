@@ -60,7 +60,7 @@ public class RescanPostProcessZips extends ZipTools implements RescanPostProcess
 						} else {
 							session.printOutput(200,file.getName() + " - Zip integrity check failed, deleting file");
 							try {
-								file.deleteUnchecked();
+								file.deleteUnchecked(true);
 							} catch (FileNotFoundException e) {
 								// file disappeared, not a problem as we wanted it gone anyway
 							}

@@ -158,6 +158,26 @@ public class BasicHandler extends AbstractHandler {
 		}
 	}
 
+	public AsyncResponse handleForceDelete(AsyncCommandArgument ac) {
+		try {
+			try {
+				getSlaveObject().forcedelete(mapPathToRenameQueue(ac.getArgs()));
+			} catch (PermissionDeniedException e) {
+				if (Slave.isWin32) {
+					synchronized (getSlaveObject().getRenameQueue()) {
+						getSlaveObject().getRenameQueue().add(new QueuedOperation(ac.getArgs(), null));
+					}
+				} else {
+					throw e;
+				}
+			}
+			sendResponse(new AsyncResponseDiskStatus(getSlaveObject().getDiskStatus()));
+			return new AsyncResponse(ac.getIndex());
+		} catch (IOException e) {
+			return new AsyncResponseException(ac.getIndex(), e);
+		}
+	}
+
 	public AsyncResponse handleListen(AsyncCommandArgument ac) {
 		String[] data = ac.getArgs().split(":");
 		boolean encrypted = data[0].equals("true");

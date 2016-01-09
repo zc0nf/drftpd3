@@ -1108,7 +1108,7 @@ public class DataConnectionHandler extends CommandInterface {
 			// settings like delete on abort are disabled
 			try {
 				if (isStor && ts.getTransferFileCreated() && ts.getTransferFile().getSize() == 0L) {
-					ts.getTransferFile().deleteUnchecked();
+					ts.getTransferFile().deleteUnchecked(true);
 				}
 			} catch (FileNotFoundException e) {
 				// File already gone which is fine

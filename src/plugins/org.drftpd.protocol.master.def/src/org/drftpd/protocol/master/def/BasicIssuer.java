@@ -63,6 +63,13 @@ public class BasicIssuer extends AbstractBasicIssuer {
 		return index;
 	}
 
+	public String issueForceDeleteToSlave(RemoteSlave rslave, String sourceFile) throws SlaveUnavailableException {
+		String index = rslave.fetchIndex();
+		rslave.sendCommand(new AsyncCommandArgument(index, "forcedelete", sourceFile));
+
+		return index;
+	}
+
 	public String issueListenToSlave(RemoteSlave rslave, boolean isSecureTransfer,
 			boolean useSSLClientMode) throws SlaveUnavailableException, SSLUnavailableException {
 		

@@ -265,14 +265,20 @@ public class FileHandle extends InodeHandle implements FileHandleInterface {
 		return false;
 	}
 
+    /**
+     * Force function is to force delete action on NoDeleteSlaves
+     * NoDeleteSlaves is most commonly used on slaves with archive, where you want to upload data but not delete it unless its a bad file.
+     * @param force
+     * @throws FileNotFoundException
+     */
 	@Override
-	public void deleteUnchecked() throws FileNotFoundException {
+	public void deleteUnchecked(boolean force) throws FileNotFoundException {
 		synchronized (getInode()) {
 			abortTransfers("File " + getPath() + " is being deleted");
 			for (RemoteSlave rslave : getSlaves()) {
 				rslave.simpleDelete(getPath());
 			}
-			super.deleteUnchecked();
+			super.deleteUnchecked(force);
 		}
 	}
 }

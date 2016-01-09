@@ -56,6 +56,7 @@ import org.drftpd.slave.async.AsyncCommandArgument;
 import org.drftpd.slave.async.AsyncResponse;
 import org.drftpd.slave.async.AsyncResponseDiskStatus;
 import org.drftpd.slave.async.AsyncResponseException;
+import org.drftpd.slave.async.AsyncResponseSiteBotMessage;
 import org.drftpd.slave.async.AsyncResponseTransferStatus;
 import org.drftpd.slave.diskselection.DiskSelectionInterface;
 import org.drftpd.util.CommonPluginUtils;
@@ -120,6 +121,8 @@ public class Slave {
 	
 	private String _bindIP = null;
 
+    private String slavename;
+
 	protected Slave() {
 	}
 
@@ -133,7 +136,7 @@ public class Slave {
 		// transfers from this slave, unless pasv_addr is set on the master for this slave
 		logger.info("Connecting to master at " + addr);
 
-		String slavename = PropertyHelper.getProperty(p, "slave.name");
+        slavename = PropertyHelper.getProperty(p, "slave.name");
 
 		if (isWin32) {
 			_renameQueue = new HashSet<QueuedOperation>();
@@ -398,7 +401,15 @@ public class Slave {
 		}
 	}
 
-	public void delete(String path) throws IOException {
+    public void delete(String path) throws IOException {
+        slaveDelete(path, false);
+    }
+
+    public void forcedelete(String path) throws IOException {
+        slaveDelete(path, true);
+    }
+
+    private void slaveDelete(String path, boolean force) throws IOException {
 		// now deletes files as well as directories, recursive!
 		Collection<Root> files;
 		try {
@@ -419,15 +430,62 @@ public class Slave {
 			}
 
 			if (file.isDirectory()) {
-				if (!file.deleteRecursive()) {
-					throw new PermissionDeniedException("delete failed on " + path);
-				}
-				logger.info("DELETEDIR: " + path);
-			} else if (file.isFile()) {
+                boolean deleteallowed = true;
+
+                // TODO here we need to read NoDeletePath from master.conf
+                // Also have a option if it should only be on certain slaves or not
+                if (path.matches(".*ARCHIVE.*") && slavename.startsWith("a")) {
+                    if (force)
+                    {
+                        logger.info("Force Delete: " + path);
+                    }
+                    else {
+                        logger.info("MASTER SENT DELETE (SKIPPING): " + path);
+                        sendResponse(new AsyncResponseSiteBotMessage("master sent delete (SKIPPING): " + path));
+                        deleteallowed = false;
+                    }
+                }
+                else {
+                    logger.info("DELETE: " + path);
+                }
+
+                if (deleteallowed)
+                {
+                    if (!file.deleteRecursive()) {
+                        throw new PermissionDeniedException("delete failed on " + path);
+                    }
+                }
+
+            } else if (file.isFile()) {
 				File dir = new PhysicalFile(file.getParentFile());
-				logger.info("DELETE: " + path);
-                logger.info("rmfile: " +file.getPath());
-				file.delete();
+
+                // TODO here we need to read NoDeletePath from master.conf
+                // Also have a option if it should only be on certain slaves or not
+                // Maybe a filter to allow deletion of certain files, or atleast archive plugin should be able to delete.
+                if (path.matches(".*ARCHIVE.*") && slavename.startsWith("a")
+                        && !path.matches("\\.collision\\.")
+                        && !path.endsWith(".nfo")
+                        && !path.endsWith(".jpg")
+                        && !path.endsWith(".mkv")
+                        && !path.endsWith(".sfv")) {
+
+                    if (force)
+                    {
+                        logger.info("Force Delete: " + path);
+                        logger.info("rmfile: " + file.getPath());
+                        file.delete();
+                    }
+                    else {
+                        logger.info("MASTER SENT DELETE (SKIPPING): " + path);
+                        logger.info("INFO: " + file.getPath());
+                        sendResponse(new AsyncResponseSiteBotMessage("master sent delete (SKIPPING): " + path));
+                    }
+                }
+                else {
+                    logger.info("DELETE: " + path);
+                    logger.info("rmfile: " + file.getPath());
+                    file.delete();
+                }
 
 				String [] dirList = dir.list();
 
