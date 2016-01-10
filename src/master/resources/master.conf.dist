@@ -76,6 +76,11 @@ indexingengine=org.drftpd.vfs.index.lucene
 remerge.pause.threshold=250
 remerge.resume.threshold=50
 
+# Master commit flushing, do not modify these
+# unless you know what you are doing
+commit.pause.threshold=250
+commit.resume.threshold=50
+
 # Slave partial remerge functionality
 # There are three possible settings for this mode:
 # off - a full remerge will be performed on connect

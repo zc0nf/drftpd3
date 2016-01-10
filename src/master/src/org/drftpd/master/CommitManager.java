@@ -46,6 +46,7 @@ public class CommitManager {
 	private boolean _isStarted;
 	private AtomicInteger _queueSize;
 	private volatile boolean _drainQueue;
+	private volatile boolean _flushQueue;
 	private Thread _commitThread;
 
 	/**
@@ -91,7 +92,16 @@ public class CommitManager {
 			// object already queued to write
 		}
 		_commitQueue.offer(new CommitableWrapper(object));
-		_queueSize.incrementAndGet();
+
+		if (_flushQueue == false
+				&& _queueSize.incrementAndGet() >= getCommitPauseThreshold()) {
+			_flushQueue = true;
+
+			// Wakeup the commit thread incase it is sleeping
+			if (_commitThread != null) {
+				_commitThread.interrupt();
+			}
+		}
 	}
 	
 
@@ -167,6 +177,22 @@ public class CommitManager {
 		}
 		return 10000;
 	}
+
+	private int getCommitPauseThreshold() {
+		try {
+			return Integer.parseInt(GlobalContext.getConfig().getMainProperties().getProperty("commit.pause.threshold", "250"));
+		} catch (NumberFormatException e) {
+		}
+		return 250;
+	}
+
+	private int getCommitResumeThreshold() {
+		try {
+			return Integer.parseInt(GlobalContext.getConfig().getMainProperties().getProperty("commit.resume.threshold", "50"));
+		} catch (NumberFormatException e) {
+		}
+		return 50;
+	}
 	
 	private void processAllLoop() {
 		while (true) {
@@ -174,7 +200,7 @@ public class CommitManager {
 			long time = System.currentTimeMillis() - delay;
 			for (Iterator<CommitableWrapper> iter = _commitQueue.iterator(); iter.hasNext();) {
 				CommitableWrapper cw = iter.next();
-				if (cw.getTime() < time || _drainQueue) {
+				if (cw.getTime() < time || _drainQueue || _flushQueue) {
 					if (writeCommitable(cw.getCommitable())) {
 						iter.remove();
 						_queueSize.decrementAndGet();
@@ -192,6 +218,14 @@ public class CommitManager {
 	private boolean writeCommitable(Commitable item) {
 		try {
 			item.writeToDisk();
+
+			if (_flushQueue == true
+					&&_queueSize.decrementAndGet() <= getCommitResumeThreshold()) {
+
+				// We can stop telling commitque to speedup now.
+				_flushQueue = false;
+			}
+
 			return true;
 		} catch (IOException e) {
 			logger.error("Error writing object to disk - "
