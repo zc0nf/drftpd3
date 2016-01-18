@@ -86,10 +86,10 @@ public abstract class InodeHandle implements InodeHandleInterface, Comparable<In
 			throw new PermissionDeniedException("You are not allowed to delete "+getPath());
 		}
 		
-		deleteUnchecked();
+		deleteUnchecked(false);
 	}
 
-	public void deleteUnchecked() throws FileNotFoundException {
+    public void deleteUnchecked(boolean force) throws FileNotFoundException {
 		getInode().delete();
 	}
 
@@ -289,7 +289,7 @@ public abstract class InodeHandle implements InodeHandleInterface, Comparable<In
 					DirectoryHandle subDir = new DirectoryHandle(toInode.getPath()+"/"+ih.getName());
 					ih.renameToUnchecked(subDir);
 					if(ih.exists()) {
-						ih.deleteUnchecked(); // This deletes subdir after we have moved subdircontent
+						ih.deleteUnchecked(false); // This deletes subdir after we have moved subdircontent
 					}
 				} else {
                     merge=false;
@@ -299,7 +299,7 @@ public abstract class InodeHandle implements InodeHandleInterface, Comparable<In
 					try {
 						if(targetInode.getSize()<inode.getSize()) {
 							//TODO implement checksum against sfv
-							targetInode.deleteUnchecked();
+							targetInode.deleteUnchecked(false);
                             merge=true;
 						}
 					} catch (FileNotFoundException e) {
@@ -316,14 +316,14 @@ public abstract class InodeHandle implements InodeHandleInterface, Comparable<In
 							}
 						}
 					} else {
-						ih.deleteUnchecked();
+						ih.deleteUnchecked(false);
 					}
 				}
 			}
 
 			if(exists()) {
-				deleteUnchecked();
-			}
+                deleteUnchecked(false);
+            }
 
 			return;
 		}
