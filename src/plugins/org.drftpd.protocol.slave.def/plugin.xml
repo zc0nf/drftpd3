@@ -60,7 +60,7 @@
 	</extension>
 
 	<extension plugin-id="slave" point-id="Handler" id="ForceDeleteHandler">
-		<parameter id="Name" value="forceDelete" />
+		<parameter id="Name" value="forcedelete" />
 		<parameter id="Class" value="org.drftpd.protocol.slave.def.BasicHandler" />
 		<parameter id="Method" value="handleForceDelete" />
     </extension>
