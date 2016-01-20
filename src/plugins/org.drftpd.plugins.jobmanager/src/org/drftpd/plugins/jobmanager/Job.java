@@ -137,7 +137,7 @@ public class Job {
 				// remove slaves that aren't in the destination list
 				for (RemoteSlave rslave : new ArrayList<RemoteSlave>(getFile().getSlaves())) {
 					if (!_destSlaves.contains(rslave.getName())) {
-						rslave.simpleDelete(getFile().getPath());
+						rslave.simpleDelete(getFile().getPath(),true);
 						getFile().removeSlave(rslave);
 					}
 				}
@@ -156,7 +156,7 @@ public class Job {
 					if (getFile().getSlaves().size() <= _originalTransferNum) {
 						return;
 					}
-					rslave.simpleDelete(getFile().getPath());
+					rslave.simpleDelete(getFile().getPath(), true);
 					getFile().removeSlave(rslave);
 				}
 			} catch (FileNotFoundException e) {
@@ -360,7 +360,7 @@ public class Job {
 			if (crcMatch || !checkCRC) {
 				logSuccess();
 			} else {
-				destSlave.simpleDelete(getFile().getPath());
+				destSlave.simpleDelete(getFile().getPath(), true);
 				logger.debug("CRC did not match for " + getFile()
 						+ " when sending from " + sourceSlave.getName()
 						+ " to " + destSlave.getName());
@@ -379,11 +379,11 @@ public class Job {
 					remoteChecksum = destSlave.fetchChecksumFromIndex(index);
 				} catch (SlaveUnavailableException e2) {
 					logger.debug("SlaveUnavailableException from ", e2);
-					destSlave.simpleDelete(getFile().getPath());
+					destSlave.simpleDelete(getFile().getPath(), true);
 					return;
 				} catch (RemoteIOException e3) {
 					logger.debug("RemoteIOException from ", e3);
-					destSlave.simpleDelete(getFile().getPath());
+					destSlave.simpleDelete(getFile().getPath(), true);
 					return;
 				}
 
@@ -445,7 +445,7 @@ public class Job {
 		try {
 			sentToSlave(getDestinationSlave());
 		} catch (FileNotFoundException e) {
-			getSourceSlave().simpleDelete(getFile().getPath());
+			getSourceSlave().simpleDelete(getFile().getPath(),true);
 			abort();
 		}
 	}
