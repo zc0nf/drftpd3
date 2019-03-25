@@ -37,5 +37,4 @@ testlinux:
     - echo JAVA_HOME = ${JAVA_HOME}
     - java -version
     - ant -version
-    - ant test
 
