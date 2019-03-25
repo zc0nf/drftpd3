@@ -5,7 +5,6 @@ stages:
 
 language: java
 sudo: false
-install: ant deps
 jdk:
   - openjdk8
   - openjdk11
