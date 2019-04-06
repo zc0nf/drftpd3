@@ -8,33 +8,36 @@ sudo: false
 jdk:
   - openjdk8
   - openjdk11
-matrix:
-  # builds as being allowed to fail
-  allow_failures:
-    - jdk: openjdk11  
 
-# build stages #
+# stages and jobs #
 
-buildlinux:
-  stage: build
-  dist: trusty
-  script:
-    - echo PATH = ${PATH}
-    - echo JAVA_HOME = ${JAVA_HOME}
-    - java -version
-    - ant -version
-    - ./genkey.sh
-    - ./build.sh -a
+jobs:
+    fast_finish: true
+    allow_failures:
+      - jdk: openjdk11
+    include:
+      - stage: build
+        name: "Building on Linux"
+        dist: trusty
+        script:
+          - echo PATH = ${PATH}
+          - echo JAVA_HOME = ${JAVA_HOME}
+          - java -version
+          - ant -version
+          - ./genkey.sh
+          - ./build.sh -a
+      - stage: test
+        name: "Testing on Linux"
+        dist: trusty
+        on_failure: never
+        script:
+          - echo PATH = ${PATH}
+          - echo JAVA_HOME = ${JAVA_HOME}
+          - java -version
+          - ant -version
+          - ant test
 
-# test stages #
+# irc notification #
 
-testlinux:
-  stage: test
-  dist: trusty
-  when: on_success
-  script:
-    - echo PATH = ${PATH}
-    - echo JAVA_HOME = ${JAVA_HOME}
-    - java -version
-    - ant -version
-
+notifications:
+  irc: "ircs://efnet.port80.se:6697/#drftpd"
