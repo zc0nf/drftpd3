@@ -17,14 +17,8 @@
  */
 package org.drftpd.slaveselection.filter;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Properties;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.drftpd.Bytes;
 import org.drftpd.exceptions.NoAvailableSlaveException;
 import org.drftpd.exceptions.ObjectNotFoundException;
@@ -33,6 +27,12 @@ import org.drftpd.slave.DiskStatus;
 import org.drftpd.slave.SlaveStatus;
 import org.drftpd.slave.Transfer;
 import org.drftpd.tests.DummyRemoteSlave;
+import org.junit.Assert;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Properties;
 
 
 /**
@@ -64,7 +64,7 @@ public class MinfreespaceFilterTest extends TestCase {
         Filter f = new MinfreespaceFilter(1, p);
         f.process(sc, null, null, Transfer.TRANSFER_SENDING_DOWNLOAD, null, null);
 
-        assertEquals(Bytes.parseBytes("-50MB"),
+        Assert.assertEquals(Bytes.parseBytes("-50MB"),
             sc.getScoreForSlave(rslaves[0]).getScore());
     }
 

@@ -17,13 +17,13 @@
  */
 package org.drftpd.plugins.jobmanager;
 
-import java.io.FileNotFoundException;
-import java.util.HashSet;
-
 import junit.framework.TestCase;
-
 import org.drftpd.master.RemoteSlave;
 import org.drftpd.tests.DummyRemoteSlave;
+import org.junit.Assert;
+
+import java.io.FileNotFoundException;
+import java.util.HashSet;
 
 
 /**
@@ -36,7 +36,7 @@ public class JobTest extends TestCase {
     }
 
     public void testRemoveDestinationSlave() {
-        HashSet<String> slaveSet = new HashSet<String>();
+        HashSet<String> slaveSet = new HashSet<>();
         RemoteSlave rslave = new DummyRemoteSlave("name");
         slaveSet.add(rslave.getName());
 
@@ -45,6 +45,6 @@ public class JobTest extends TestCase {
 			job.sentToSlave(rslave);
 		} catch (FileNotFoundException e) {
 		}
-        assertTrue(job.isDone());
+        Assert.assertTrue(job.isDone());
     }
 }

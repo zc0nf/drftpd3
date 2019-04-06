@@ -17,14 +17,13 @@
  */
 package org.drftpd.util;
 
+import org.apache.log4j.Logger;
+
+import javax.net.ServerSocketFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.util.Random;
-
-import javax.net.ServerSocketFactory;
-
-import org.apache.log4j.Logger;
+import java.security.SecureRandom;
 
 /**
  * @author mog
@@ -39,7 +38,7 @@ public class PortRange {
 	
 	private int _bufferSize = 0;
 
-	Random rand = new Random();
+	SecureRandom rand = new SecureRandom();
 
 	/**
 	 * Creates a default port range for port 49152 to 65535.
@@ -100,7 +99,7 @@ public class PortRange {
 				pos = _minPort;
 			}
 			if (pos == initPos) {
-				if (retry == false) {
+				if (!retry) {
 					throw new RuntimeException("PortRange exhausted");
 				}
 				System.runFinalization();

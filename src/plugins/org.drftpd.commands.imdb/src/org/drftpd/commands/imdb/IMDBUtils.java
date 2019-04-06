@@ -38,9 +38,11 @@ import org.tanesha.replacer.ReplacerEnvironment;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,33 +57,35 @@ public class IMDBUtils {
 	public static void setInfo(IMDBInfo imdbInfo, IMDBParser imdbParser) {
 		imdbInfo.setTitle(imdbParser.getTitle());
 		imdbInfo.setYear(imdbParser.getYear());
+		imdbInfo.setLanguage(imdbParser.getLanguage());
+		imdbInfo.setCountry(imdbParser.getCountry());
 		imdbInfo.setDirector(imdbParser.getDirector());
-		imdbInfo.setGenre(imdbParser.getGenre());
+		imdbInfo.setGenres(imdbParser.getGenres());
 		imdbInfo.setPlot(imdbParser.getPlot());
-		imdbInfo.setVotes(imdbParser.getVotes());
 		imdbInfo.setRating(imdbParser.getRating());
-		imdbInfo.setScreens(imdbParser.getScreens());
-		imdbInfo.setLimited(imdbParser.getLimited());
+		imdbInfo.setVotes(imdbParser.getVotes());
+		imdbInfo.setRuntime(imdbParser.getRuntime());
 		imdbInfo.setMovieFound(imdbParser.foundMovie());
 	}
 
 	public static ReplacerEnvironment getEnv(IMDBInfo imdbInfo) {
 		ReplacerEnvironment env = new ReplacerEnvironment(SiteBot.GLOBAL_ENV);
 		env.add("title", imdbInfo.getTitle());
+		env.add("year", imdbInfo.getYear() != null ? imdbInfo.getYear() : "-");
+		env.add("language", imdbInfo.getLanguage());
+		env.add("country", imdbInfo.getCountry());
 		env.add("director", imdbInfo.getDirector());
-		env.add("genre", imdbInfo.getGenre());
+		env.add("genres", imdbInfo.getGenres());
 		env.add("plot", imdbInfo.getPlot());
 		env.add("rating", imdbInfo.getRating() != null ? imdbInfo.getRating()/10+"."+imdbInfo.getRating()%10 : "-");
 		env.add("votes", imdbInfo.getVotes() != null ? imdbInfo.getVotes() : "-");
-		env.add("year", imdbInfo.getYear() != null ? imdbInfo.getYear() : "-");
 		env.add("url", imdbInfo.getURL());
-		env.add("screens", imdbInfo.getScreens() != null ? imdbInfo.getScreens() : "-");
-		env.add("limited", imdbInfo.getLimited());
+		env.add("runtime", imdbInfo.getRuntime() != null ? imdbInfo.getRuntime() : "-");
 		return env;
 	}
 
 	public static long randomNumber() {
-		return (IMDBConfig.getInstance().getStartDelay() + (new Random()).nextInt(
+		return (IMDBConfig.getInstance().getStartDelay() + (new SecureRandom()).nextInt(
 				IMDBConfig.getInstance().getEndDelay()-IMDBConfig.getInstance().getStartDelay()
 				))*1000;
 	}
@@ -117,6 +121,7 @@ public class IMDBUtils {
 			ReplacerEnvironment env = getEnv(imdbInfo);
 			env.add("release", dir.getName());
 			env.add("section", section.getName());
+			env.add("sectioncolor", section.getColor());
 			GlobalContext.getEventService().publishAsync(new IMDBEvent(env, dir));
 		}
 	}
@@ -154,8 +159,12 @@ public class IMDBUtils {
 			newTitle = newTitle.replaceAll("\\"+separator," ");
 		}
 		newTitle = newTitle.trim();
-		//remove extra spaces
-		newTitle = newTitle.replaceAll("\\s+","%20");
+		// Escape HTML
+		try {
+			newTitle = URLEncoder.encode(newTitle, "UTF-8");
+		} catch (UnsupportedEncodingException ignored) {
+			// Can be safely ignored because UTF-8 is always supported
+		}
 		return newTitle;
 	}
 
@@ -203,7 +212,7 @@ public class IMDBUtils {
 			throw new FileNotFoundException("Index Exception: "+e.getMessage());
 		}
 
-		ArrayList<DirectoryHandle> releases = new ArrayList<DirectoryHandle>();
+		ArrayList<DirectoryHandle> releases = new ArrayList<>();
 
 		for (Map.Entry<String,String> item : inodes.entrySet()) {
 			try {

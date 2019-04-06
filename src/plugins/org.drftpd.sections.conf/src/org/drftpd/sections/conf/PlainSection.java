@@ -17,17 +17,17 @@
  */
 package org.drftpd.sections.conf;
 
-import java.io.FileNotFoundException;
-import java.util.Collections;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.drftpd.GlobalContext;
 import org.drftpd.PropertyHelper;
 import org.drftpd.exceptions.FileExistsException;
 import org.drftpd.vfs.DirectoryHandle;
 import org.drftpd.vfs.VirtualFileSystem;
+
+import java.io.FileNotFoundException;
+import java.util.Collections;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * @author mog
@@ -85,7 +85,7 @@ public class PlainSection implements ConfigurableSectionInterface {
 		try {
 			return getBaseDirectory().getDirectoriesUnchecked();
 		} catch (FileNotFoundException e) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 	}
 	

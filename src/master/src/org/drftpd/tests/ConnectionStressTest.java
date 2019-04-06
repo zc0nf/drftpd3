@@ -17,15 +17,15 @@
  */
 package org.drftpd.tests;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import junit.framework.TestCase;
-
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
+import org.junit.Assert;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * This a Stress TestCase for the ConnectionManager ThreadPool.<br>
@@ -43,7 +43,7 @@ public class ConnectionStressTest extends TestCase {
 	private int failures = 0;
 	private int success = 0;
 	
-	private ArrayList<Thread> list = new ArrayList<Thread>();
+	private ArrayList<Thread> list = new ArrayList<>();
 	
 	public ConnectionStressTest(String fName) {
 		super(fName);
@@ -67,7 +67,7 @@ public class ConnectionStressTest extends TestCase {
 			} 
 		}
 
-		assertTrue(success == i); // means that every attemp was successful when connecting
+		Assert.assertTrue(success == i); // means that every attemp was successful when connecting
 
 		Collections.reverse(list); // must reverse the order in order to iterate thru the first client firstly.
 		
@@ -78,8 +78,8 @@ public class ConnectionStressTest extends TestCase {
 			}
 			dead += 1;
 		}
-		
-		assertTrue(dead == success); // all threads were finalized.
+
+		Assert.assertTrue(dead == success); // all threads were finalized.
 	}
 	
 	public void addFailure() {

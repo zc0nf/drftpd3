@@ -16,11 +16,6 @@
  */
 package org.drftpd.usermanager;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.drftpd.GlobalContext;
 import org.drftpd.commands.UserManagement;
@@ -30,6 +25,11 @@ import org.drftpd.event.UserEvent;
 import org.drftpd.exceptions.DuplicateElementException;
 import org.drftpd.master.Commitable;
 import org.drftpd.util.HostMaskCollection;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Implements basic functionality for the User interface.
@@ -50,11 +50,11 @@ public abstract class AbstractUser extends User implements Commitable {
 
 	private long _credits;
 
-	protected KeyedMap<Key<?>, Object> _data = new KeyedMap<Key<?>, Object>();
+	protected KeyedMap<Key<?>, Object> _data = new KeyedMap<>();
 
 	private String _group = "nogroup";
 
-	private ArrayList<String> _groups = new ArrayList<String>();
+	private ArrayList<String> _groups = new ArrayList<>();
 
 	private HostMaskCollection _hostMasks = new HostMaskCollection();
 
@@ -122,30 +122,6 @@ public abstract class AbstractUser extends User implements Commitable {
 		_groups.add(group);
 	}
 
-	/*
-	 * public boolean checkIP(String[] masks, boolean useIdent) { Perl5Matcher m =
-	 * new Perl5Matcher();
-	 * 
-	 * for (Iterator e2 = ipMasks.iterator(); e2.hasNext();) { String mask =
-	 * (String) e2.next();
-	 * 
-	 * if (!useIdent) { mask = mask.substring(mask.indexOf('@') + 1);
-	 * 
-	 * for (int i = 0; i < masks.length; i++) { masks[i] =
-	 * masks[i].substring(masks[i].indexOf('@') + 1); } }
-	 * 
-	 * Pattern p;
-	 * 
-	 * try { p = new GlobCompiler().compile(mask); } catch
-	 * (MalformedPatternException ex) { ex.printStackTrace();
-	 * 
-	 * return false; }
-	 * 
-	 * for (int i = 0; i < masks.length; i++) { if (m.matches(masks[i], p)) {
-	 * return true; } } }
-	 * 
-	 * return false; }
-	 */
 	public boolean equals(Object obj) {
 		if (!(obj instanceof User))
 			return false;
@@ -175,7 +151,7 @@ public abstract class AbstractUser extends User implements Commitable {
 	}
 
 	public void setGroups(List<String> groups) {
-		_groups = new ArrayList<String>(groups);
+		_groups = new ArrayList<>(groups);
 	}
 
 	public void setHostMaskCollection(HostMaskCollection masks) {

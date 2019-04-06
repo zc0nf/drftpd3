@@ -1,0 +1,40 @@
+# DrFTPD travis config by eN0Rm
+stages:
+  - build
+  - test
+
+language: java
+sudo: false
+jdk:
+  - openjdk8
+  - openjdk11
+matrix:
+  # builds as being allowed to fail
+  allow_failures:
+    - jdk: openjdk11  
+
+# build stages #
+
+buildlinux:
+  stage: build
+  dist: trusty
+  script:
+    - echo PATH = ${PATH}
+    - echo JAVA_HOME = ${JAVA_HOME}
+    - java -version
+    - ant -version
+    - ./genkey.sh
+    - ./build.sh -a
+
+# test stages #
+
+testlinux:
+  stage: test
+  dist: trusty
+  when: on_success
+  script:
+    - echo PATH = ${PATH}
+    - echo JAVA_HOME = ${JAVA_HOME}
+    - java -version
+    - ant -version
+
