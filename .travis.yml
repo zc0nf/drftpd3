@@ -1,5 +1,6 @@
 # DrFTPD travis config by eN0Rm
 language: java
+install: ant deps
 sudo: false
 
 stages:
@@ -62,9 +63,8 @@ jobs:
         - echo JAVA_HOME = ${JAVA_HOME}
         - java -version
         - ant -version
-        - ./genkey.sh
-        - ./build.sh -a
-
+        - ant test
+        
 # irc notification #
 notifications:
   irc: "ircs://efnet.port80.se:6697/#drftpd"
