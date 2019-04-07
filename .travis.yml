@@ -1,43 +1,69 @@
 # DrFTPD travis config by eN0Rm
+language: java
+sudo: false
+
 stages:
   - build
   - test
 
-language: java
-sudo: false
-jdk:
-  - openjdk8
-  - openjdk11
-
-# stages and jobs #
-
 jobs:
-    fast_finish: true
-    allow_failures:
-      - jdk: openjdk11
-    include:
-      - stage: build
-        name: "Building on Linux"
-        dist: trusty
-        script:
-          - echo PATH = ${PATH}
-          - echo JAVA_HOME = ${JAVA_HOME}
-          - java -version
-          - ant -version
-          - ./genkey.sh
-          - ./build.sh -a
-      - stage: test
-        name: "Testing on Linux"
-        dist: trusty
-        on_failure: never
-        script:
-          - echo PATH = ${PATH}
-          - echo JAVA_HOME = ${JAVA_HOME}
-          - java -version
-          - ant -version
-          - ant test
+  # global settings #
+  fast_finish: true
+  allow_failures:
+    - jdk: openjdk11
+  include:
+   ### jobs for Java8 ###
+         # build #
+    - stage: build
+      name: "Building Java8 on Linux"
+      dist: trusty
+      jdk: openjdk8
+      script:
+        - echo PATH = ${PATH}
+        - echo JAVA_HOME = ${JAVA_HOME}
+        - java -version
+        - ant -version
+        - ./genkey.sh
+        - ./build.sh -a
+         # test #
+    - stage: test
+      name: "Testing Java8 on Linux"
+      dist: trusty
+      jdk: openjdk8
+      on_failure: never
+      script:
+        - echo PATH = ${PATH}
+        - echo JAVA_HOME = ${JAVA_HOME}
+        - java -version
+        - ant -version
+        - ant test
+
+   ### jobs for Java11 ###
+         # build #
+    - stage: build
+      name: "Building Java11 on Linux"
+      dist: trusty
+      jdk: openjdk11
+      script:
+        - echo PATH = ${PATH}
+        - echo JAVA_HOME = ${JAVA_HOME}
+        - java -version
+        - ant -version
+        - ./genkey.sh
+        - ./build.sh -a
+         # test #
+    - stage: test
+      name: "Testing Java11 on Linux"
+      dist: trusty
+      jdk: openjdk11
+      on_failure: never
+      script:
+        - echo PATH = ${PATH}
+        - echo JAVA_HOME = ${JAVA_HOME}
+        - java -version
+        - ant -version
+        - ant test
 
 # irc notification #
-
 notifications:
   irc: "ircs://efnet.port80.se:6697/#drftpd"
