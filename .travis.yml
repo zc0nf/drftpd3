@@ -62,7 +62,8 @@ jobs:
         - echo JAVA_HOME = ${JAVA_HOME}
         - java -version
         - ant -version
-        - ant test
+        - ./genkey.sh
+        - ./build.sh -a
 
 # irc notification #
 notifications:
